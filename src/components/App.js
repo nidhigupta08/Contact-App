@@ -1,10 +1,11 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import './App.css';
 import Header from './Header'; 
 import AddContact from './AddContacts';
 import ContactList from './ContactList';
 function App() {
   
+  const LOCAL_STORAGE_KEY="contacts";
 //rendering list in react .. created a list using array
   // const contacts=[
   //   {
@@ -24,7 +25,20 @@ function App() {
   const [contacts,setContacts]=useState([]) //empty array 
 const  addContactHandler=(contact)=>{
  console.log(contact);
+ setContacts([...contacts, contact]);
 };
+
+//uawEffect() react hook-whenever the value get chnges useeffect help us to render the  components again. it takes a arrow fun
+
+useEffect(()=>{
+ const retriveContacts =JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+ if(retriveContacts) setContacts(retriveContacts);
+}, []);
+
+useEffect(()=>{
+  localStorage.setItem(LOCAL_STORAGE_KEY,JSON.stringify(contacts));
+}, [contacts]);
+
   return (
     <div className='ui container'> 
       <Header/>
