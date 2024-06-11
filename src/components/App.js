@@ -1,50 +1,50 @@
 import React,{useState,useEffect} from 'react';
+import{v4 as uuid } from 'uuid';
 import './App.css';
 import Header from './Header'; 
 import AddContact from './AddContacts';
 import ContactList from './ContactList';
+
+
 function App() {
-  
-  const LOCAL_STORAGE_KEY="contacts";
-//rendering list in react .. created a list using array
-  // const contacts=[
-  //   {
-  //     id:"1",
-  //     name:"Nidhi",
-  //     email:"guptanidhs@gmail.com"
-  //   },
-  //   {
-  //     id:"2",
-  //     name:"suman",
-  //     email:"suman@gmail.com"
-  //   }
-  // ];
+  const LOCAL_STORAGE_KEY = "contacts";
+  const [contacts, setContacts] = useState(
+    JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) ?? []
+  );
 
-  //using the "usestate react hook"
-  //if we have a functional component thn we make use of react hook""
-  const [contacts,setContacts]=useState([]) //empty array 
-const  addContactHandler=(contact)=>{
- console.log(contact);
- setContacts([...contacts, contact]);
-};
+  const addContactHandler = (contact) => {
+    console.log(contact);
+    setContacts([...contacts, { id: uuid(), ...contact }]);
+  };
 
-//uawEffect() react hook-whenever the value get chnges useeffect help us to render the  components again. it takes a arrow fun
+  const removeContactHandler=(id)=>{
+   const newContactList=contacts.filter((contact)=>{
+    return contact.id!==id;
+ });
+setContacts(newContactList);
+    };
 
-useEffect(()=>{
- const retriveContacts =JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
- if(retriveContacts) setContacts(retriveContacts);
-}, []);
 
+  //useEffect() react hook-whenever the value get chnges useeffect help us to render the  components again. it takes a arrow fun
+
+//getting the record from the local storage
+
+// useEffect(()=>{
+//  const retrieveContacts =);
+//  if(retrieveContacts) setContacts(retrieveContacts);
+// }, []);
+
+//settingt he data into the local storage  and have a dependency array
 useEffect(()=>{
   localStorage.setItem(LOCAL_STORAGE_KEY,JSON.stringify(contacts));
 }, [contacts]);
 
-  return (
+   return (
     <div className='ui container'> 
       <Header/>
        <AddContact addContactHandler={addContactHandler}/>
        {/* Props- pass data from parent to child   & contacts as a property and contacts as array */}
-     <ContactList contacts={contacts}/> 
+     <ContactList contacts={contacts} getContactId={removeContactHandler}/> 
     </div>
   );
 }
